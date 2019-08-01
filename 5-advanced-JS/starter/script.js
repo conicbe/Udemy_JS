@@ -1,4 +1,9 @@
 /* Notes 
+
+Practincing the basics of github. git status, git add, git commit -m "message", git push
+
+Its good to practice these things 
+
 everything is an object
 primitives are strings, numbers, booleans, undefined, null
 arrays, fucntions, objects dates wrappers are objects

@@ -223,6 +223,7 @@ function game() {
 game();
 */
 
+/*
 ( function () {
     var score = Math.random() * 10;
     console.log(score >= 5);
@@ -236,6 +237,15 @@ game();
     console.log(score >= 5 - goodLuck);
     console.log(score);
 })(5);
+*/
+
+//code isn't reusable but is good for data privacy
+
+
+//=============================================
+//Closures
+//hello github
+
 
 
 

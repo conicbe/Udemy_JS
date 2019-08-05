@@ -85,9 +85,7 @@ add event handler
         }
     }
 
-
  })();
-
 
  //seperation of concerns for top two. Stand alone
  //UI CONTROLLER
@@ -98,7 +96,9 @@ add event handler
         inputType: '.add__type',
         inputDescription: '.add__description',
         inputValue: '.add__value',
-        inputBtn: '.add__btn'
+        inputBtn: '.add__btn',
+        incomeContainer: '.income__list',
+        expensesContainer: '.expenses__list'
     };
     //how do we add dom strings outside of class
 
@@ -112,6 +112,54 @@ add event handler
              };
          },
 
+         // add another public 
+         addListItem: function(obj, type) {
+            var html, newHTML, element;
+            // Create HTML string with placeholder text
+            //putting in quotes and removing spaces works
+            // just commenting this out for now as a quick test
+            
+            if (type === 'inc'){
+                element = DOMstrings.incomeContainer;
+                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+
+            } else if (type === 'exp'){
+                element = DOMstrings.expensesContainer;
+                html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i>button></div></div></div>'
+            }
+
+            // Repladce the placeholder text with data
+            newHTML = html.replace('%id%', obj.id);
+            //we have replaced new placeholder
+            newHTML = newHTML.replace('%description%', obj.description);
+            newHTML = newHTML.replace('%value%', obj.value);
+
+            //insert html into the dom
+            document.querySelector(element).insertAdjacentHTML('afterend', newHTML);
+         },
+
+         //this is to clear the input fields
+         clearFields: function() {
+             var fields, fieldsArr;
+             //select both fields in DOMstrings.  
+             //query select returns a list not an array.
+            fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
+
+            //convert list to array. Slice() returns copy of array that it is called on
+            //fields.slice(); Won't work as is not array
+            //We can get Array.prototype to use slice method. Pass in fields as input to call method.
+            fieldsArr = Array.prototype.slice.call(fields);
+
+            //we can use for loop to clear array input but we will use forEach method
+            //I am a bit confused as to how this works with the anonynum function that is immediately called 
+            fieldsArr.forEach(function(current, index, array) {
+                    current.value = "";
+            });
+            //sets curser back to first element in array (which is searchbar);
+            fieldsArr[0].focus();
+
+         },
+         
          getDOMstrings: function() {
              return DOMstrings;
          }
@@ -139,19 +187,31 @@ add event handler
         });
     };
 
+    //need to keep these together
+    //each function has a simple task
+    var updateBudget = function() {
+        
+        // 1.. caluclate budget
+
+        // 2. return the budget
+
+        // 3. diasplay budge on uo.
+    };
+
     //function that adds new item
+    //this gets items back
     var ctrlAddItem = function() {
         var input, newItem;
         // 1. get field input data
         input = UICtrl.getinput();
         // 2. add item to budget contrroller
         //this returns an object which has to be saved in var
-        budgetController.addItem(input.type, input.description, input.value);
+        newItem = budgetController.addItem(input.type, input.description, input.value);
         //3. add item to ui
+        UICtrl.addListItem(newItem, input.type);
+        //4. clear the field
+        UICtrl.clearFields();
 
-        //4. caluclate budget
-
-        //5. diasplay budge on uo.
     };
 
     //we want method to be public so we return in an object

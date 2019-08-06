@@ -23,7 +23,7 @@ add event handler
 
 */
 
-// BUDGET CONTROLLER
+// BUDGET CONTROLLER///////////////////////////////////////////////////////
  var budgetController = (function() {
 
     //create function constructor to initialize objects
@@ -37,6 +37,17 @@ add event handler
         this.id = id;
         this.description = description;
         this.value = value;
+    };
+
+    //internal function
+    var calculateTotal = function(type) {
+        var sum = 0;
+        //for each method has callback function
+        data.allItems[type].forEach(function(cur) {
+            sum = sum + cur.value;
+        });
+        //this adds sum to data totals
+        data.totals[type] = sum;
     };
 
     //data structures. Got to be efficiient. Below are examples of objects inside objects
@@ -78,8 +89,20 @@ add event handler
             // Return the new element
             return newItem;
         },
-        //just so we can see in kthe console
 
+        //create new method that calculates the budget
+        calculateBudget: function() {
+            
+            // calculate total income and expenses
+            calculateTotal('exp');
+            calculateTotal('inc');
+
+            //calculate budget: income - expenses
+
+            // calculate percentage of income
+        },
+
+        //just so we can see in kthe console
         testing: function() {
             console.log(data);
         }
@@ -87,8 +110,8 @@ add event handler
 
  })();
 
- //seperation of concerns for top two. Stand alone
- //UI CONTROLLER
+ //UI CONTROLLER/////////////////////////////////////////////////////////////////////////
+
  var UIController = (function() {
 
     //creating data structure to make changing class names in the future a lot easier
@@ -108,8 +131,9 @@ add event handler
              return {
                 type: document.querySelector(DOMstrings.inputType).value, // Will be either income or expenses
                 description: document.querySelector(DOMstrings.inputDescription).value,
-                value: document.querySelector(DOMstrings.inputValue).value
-             };
+                //convert string to floating decimal value
+                value: parseFloat(document.querySelector(DOMstrings.inputValue).value
+                )};
          },
 
          // add another public 
@@ -168,7 +192,7 @@ add event handler
  })();
 
 //this is how the two connect
-// GLOBAL APP CONTROLLER
+// GLOBAL APP CONTROLLER////////////////////////////////////////////////////////////////////////
  var controller = (function(budgetCtrl, UICtrl) {
 
     //function that sets up event listeners
@@ -202,15 +226,23 @@ add event handler
     //this gets items back
     var ctrlAddItem = function() {
         var input, newItem;
+
         // 1. get field input data
         input = UICtrl.getinput();
-        // 2. add item to budget contrroller
-        //this returns an object which has to be saved in var
-        newItem = budgetController.addItem(input.type, input.description, input.value);
-        //3. add item to ui
-        UICtrl.addListItem(newItem, input.type);
-        //4. clear the field
-        UICtrl.clearFields();
+        //worlds most confusing if/else statement. If input is not empty/ 
+        if(input.description !== "" && !isNaN(input.value) && input.value > 0) {
+
+            // 2. add item to budget contrroller
+            //this returns an object which has to be saved in var
+            newItem = budgetController.addItem(input.type, input.description, input.value);
+            //3. add item to ui
+            UICtrl.addListItem(newItem, input.type);
+            //4. clear the field
+            UICtrl.clearFields();
+            //calculate and update budget
+            updateBudget();
+        }
+
 
     };
 
